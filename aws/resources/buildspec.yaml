@@ -1,0 +1,26 @@
+version: 0.2
+
+env:
+  variables:
+    RESOURCES_DIR: 'aws/resources'
+
+phases:
+  pre_build:
+    commands:
+      - terraform fmt -check -diff -recursive ${RESOURCES_DIR}
+      - |
+        terraform init -input=false -backend=true \
+          -backend-config="bucket=${PROJECT}-artifacts" \
+          -backend-config="key=terraform/terraform.tfstate" \
+          -backend-config="dynamodb_table=${PROJECT}-terraform-lock" \
+          -backend-config="region=${AWS_REGION}" \
+          ${RESOURCES_DIR}
+      - terraform validate -json ${RESOURCES_DIR}
+  build:
+    commands:
+      - |
+        terraform apply \
+          -input=false -auto-approve -compact-warnings \
+          -var="AWS_REGION=${AWS_REGION}" \
+          -var="PROJECT=${PROJECT}" \
+          ${RESOURCES_DIR}
