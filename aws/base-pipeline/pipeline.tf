@@ -110,7 +110,7 @@ resource "aws_codebuild_project" "codebuild" {
     image_pull_credentials_type = "CODEBUILD"
 
     environment_variable {
-      name = "PROJECT"
+      name  = "PROJECT"
       value = "${lower(var.PROJECT)}"
     }
   }
@@ -270,7 +270,7 @@ resource "github_repository" "infrastructure_repo" {
   provider    = github
   name        = var.GITHUB_REPOSITORY
   description = "Repository containing the IaC files for the Rabe GitOps resources"
-  
+
   private = false
 
   template {
