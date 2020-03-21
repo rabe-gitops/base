@@ -31,7 +31,7 @@ resource "aws_s3_bucket" "artifacts_bucket" {
 
   tags = {
     Name    = "${lower(var.PROJECT)}-artifacts"
-    Project = "${lower(var.PROJECT)}"
+    Project = lower(var.PROJECT)
   }
 }
 
@@ -50,7 +50,7 @@ resource "aws_dynamodb_table" "dynamodb_terraform_lock_table" {
 
   tags = {
     Name    = "${lower(var.PROJECT)}-terraform-lock"
-    Project = "${lower(var.PROJECT)}"
+    Project = lower(var.PROJECT)
   }
 }
 
@@ -77,7 +77,7 @@ EOF
 
   tags = {
     Name    = "${var.PROJECT}CodeBuildRole"
-    Project = "${lower(var.PROJECT)}"
+    Project = lower(var.PROJECT)
   }
 }
 
@@ -111,7 +111,7 @@ resource "aws_codebuild_project" "codebuild" {
 
     environment_variable {
       name  = "PROJECT"
-      value = "${lower(var.PROJECT)}"
+      value = lower(var.PROJECT)
     }
   }
 
@@ -124,7 +124,7 @@ resource "aws_codebuild_project" "codebuild" {
 
   tags = {
     Name    = "${lower(var.PROJECT)}-codebuild"
-    Project = "${lower(var.PROJECT)}"
+    Project = lower(var.PROJECT)
   }
 }
 
@@ -150,7 +150,7 @@ EOF
 
   tags = {
     Name    = "${var.PROJECT}CodePipelineRole"
-    Project = "${lower(var.PROJECT)}"
+    Project = lower(var.PROJECT)
   }
 }
 
@@ -243,7 +243,7 @@ resource "aws_codepipeline" "codepipeline" {
 
   tags = {
     Name    = "${lower(var.PROJECT)}-pipeline"
-    Project = "${lower(var.PROJECT)}"
+    Project = lower(var.PROJECT)
   }
 }
 
@@ -275,7 +275,7 @@ resource "github_repository" "infrastructure_repo" {
 
   template {
     owner      = "rabe-gitops"
-    repository = "infrastructure"
+    repository = "base"
   }
 }
 
