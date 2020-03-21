@@ -260,7 +260,7 @@ resource "aws_codepipeline_webhook" "codepipeline_webhook" {
 
   filter {
     json_path    = "$.ref"
-    match_equals = "refs/heads/master"
+    match_equals = "refs/heads/${var.GITHUB_BRANCH}"
   }
 }
 
