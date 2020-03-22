@@ -1,5 +1,5 @@
 terraform {
-  backend "s3" {} # backend config in 'backend-config.tfvars' file
+  backend "s3" {} # 'backend-config' options to be passed at runtime!
 }
 
 provider "aws" {

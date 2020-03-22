@@ -23,4 +23,5 @@ phases:
           -input=false -auto-approve -compact-warnings \
           -var="AWS_REGION=${AWS_REGION}" \
           -var="PROJECT=${PROJECT}" \
+          -var-file="${RESOURCES_DIR}/terraform.tfvars"
           ${RESOURCES_DIR}
