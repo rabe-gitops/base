@@ -6,10 +6,6 @@ variable "AWS_REGION" {
   type = string
 }
 
-variable "GITHUB_OWNER" {
-  type = string
-}
-
 variable "VPC_CIDR" {
   type = string
 }
