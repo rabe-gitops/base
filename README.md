@@ -1,4 +1,4 @@
-# Base
+# Rabe GitOps IaC
 
 [![License](https://img.shields.io/github/license/rabe-gitops/base)](LICENSE)
 

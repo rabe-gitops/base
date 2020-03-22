@@ -6,7 +6,7 @@ provider "aws" {
 
 provider "github" {
   version      = "~> 2.4"
-  token        = var.GITHUB_TOKEN # set the TF_VAR_GITHUB_TOKEN before!
+  token        = var.GITHUB_TOKEN # set the TF_VAR_GITHUB_TOKEN env variable before!
   organization = var.GITHUB_OWNER
 }
 
