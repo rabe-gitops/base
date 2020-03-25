@@ -1,3 +1,11 @@
+data "aws_ssm_parameter" "github_token" {
+  name = "/${lower(var.PROJECT)}/github/token"
+}
+
+data "aws_ssm_parameter" "webhook_secret" {
+  name = "/${lower(var.PROJECT)}/webhook/secret"
+}
+
 provider "aws" {
   version = "~> 2.54"
   region  = var.AWS_REGION
@@ -6,7 +14,7 @@ provider "aws" {
 
 provider "github" {
   version      = "~> 2.4"
-  token        = var.GITHUB_TOKEN # set the TF_VAR_GITHUB_TOKEN env variable before!
+  token        = data.aws_ssm_parameter.github_token.value # set the TF_VAR_GITHUB_TOKEN env variable before!
   organization = var.GITHUB_OWNER
 }
 
@@ -217,7 +225,7 @@ resource "aws_codepipeline" "codepipeline" {
         Owner                = var.GITHUB_OWNER
         Repo                 = github_repository.infrastructure_repo.name
         Branch               = var.GITHUB_BRANCH
-        OAuthToken           = var.GITHUB_TOKEN # set the TF_VAR_GITHUB_TOKEN before!
+        OAuthToken           = data.aws_ssm_parameter.github_token.value
       }
     }
   }
@@ -226,7 +234,7 @@ resource "aws_codepipeline" "codepipeline" {
     name = "Build"
 
     action {
-      name             = "Apply"
+      name             = "PlanOrApplyOrDestroy"
       category         = "Build"
       run_order        = 2
       owner            = "AWS"
@@ -255,7 +263,7 @@ resource "aws_codepipeline_webhook" "codepipeline_webhook" {
   target_pipeline = aws_codepipeline.codepipeline.name
 
   authentication_configuration {
-    secret_token = var.WEBHOOK_SECRET # set the TF_VAR_WEBHOOK_SECRET before!
+    secret_token = data.aws_ssm_parameter.webhook_secret.value
   }
 
   filter {
@@ -287,8 +295,8 @@ resource "github_repository_webhook" "repository_webhook" {
     url          = aws_codepipeline_webhook.codepipeline_webhook.url
     content_type = "json"
     insecure_ssl = true
-    secret       = var.WEBHOOK_SECRET # set the TF_VAR_WEBHOOK_SECRET before!
+    secret       = data.aws_ssm_parameter.webhook_secret.value
   }
 
-  events = ["push"]
+  events = ["PUSH", "PULL_REQUEST_CREATED"]
 }

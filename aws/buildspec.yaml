@@ -3,19 +3,34 @@ version: 0.2
 env:
   variables:
     RESOURCES_DIR: 'aws/resources'
-    TF_COMMAND: 'apply' # apply / destroy
+    TF_ACTION: 'apply' # apply / destroy
 
 phases:
   pre_build:
     commands:
+      # Check
       - terraform fmt -check -diff -recursive ${RESOURCES_DIR}
+
+      # Init
       - |
         terraform init -input=false -backend=true \
           -backend-config="${RESOURCES_DIR}/terraform.tfbackend" \
           ${RESOURCES_DIR}
+
+      # Validate
       - terraform validate -json ${RESOURCES_DIR}
+      
+      # Pull Requests on 'master' -> plan
+      # Push/Merge on 'master' -> apply/destroy
+      - |
+        if [[ ${CODEBUILD_WEBHOOK_TRIGGER} =~ pr/* ]]; then
+          TF_COMMAND="plan"
+        else
+          TF_COMMAND=${TF_ACTION}
+        fi
   build:
     commands:
+      # Run
       - |
         terraform ${TF_COMMAND} \
           -input=false -auto-approve -compact-warnings \
