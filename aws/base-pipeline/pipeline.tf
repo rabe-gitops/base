@@ -255,6 +255,7 @@ resource "aws_codepipeline" "codepipeline" {
   }
 }
 
+# Webhooks
 resource "aws_codepipeline_webhook" "codepipeline_webhook" {
   provider        = aws
   name            = "${lower(var.PROJECT)}-pipeline-webhook"
@@ -269,6 +270,23 @@ resource "aws_codepipeline_webhook" "codepipeline_webhook" {
   filter {
     json_path    = "$.ref"
     match_equals = "refs/heads/${var.GITHUB_BRANCH}"
+  }
+}
+
+resource "aws_codebuild_webhook" "codebuild_webhook" {
+  project_name = aws_codebuild_project.codebuild.name
+  secret = data.aws_ssm_parameter.webhook_secret.value
+
+  filter_group {
+    filter {
+      type    = "EVENT"
+      pattern = "PULL_REQUEST_CREATED"
+    }
+
+    filter {
+      type    = "HEAD_REF"
+      pattern = "master"
+    }
   }
 }
 
@@ -287,7 +305,7 @@ resource "github_repository" "infrastructure_repo" {
   }
 }
 
-resource "github_repository_webhook" "repository_webhook" {
+resource "github_repository_webhook" "repository_deploy_webhook" {
   provider   = github
   repository = github_repository.infrastructure_repo.name
 
@@ -298,5 +316,20 @@ resource "github_repository_webhook" "repository_webhook" {
     secret       = data.aws_ssm_parameter.webhook_secret.value
   }
 
-  events = ["PUSH", "PULL_REQUEST_CREATED"]
+  events = ["push"]
 }
+
+resource "github_repository_webhook" "repository_validate_webhook" {
+  provider   = github
+  repository = github_repository.infrastructure_repo.name
+
+  configuration {
+    url          = aws_codebuild_webhook.codebuild_webhook.url
+    content_type = "json"
+    insecure_ssl = true
+    secret       = data.aws_ssm_parameter.webhook_secret.value
+  }
+
+  events = ["push"]
+}
+
