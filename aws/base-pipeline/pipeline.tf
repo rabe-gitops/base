@@ -275,7 +275,6 @@ resource "aws_codepipeline_webhook" "codepipeline_webhook" {
 
 resource "aws_codebuild_webhook" "codebuild_webhook" {
   project_name = aws_codebuild_project.codebuild.name
-  secret = data.aws_ssm_parameter.webhook_secret.value
 
   filter_group {
     filter {
@@ -327,9 +326,9 @@ resource "github_repository_webhook" "repository_validate_webhook" {
     url          = aws_codebuild_webhook.codebuild_webhook.url
     content_type = "json"
     insecure_ssl = true
-    secret       = data.aws_ssm_parameter.webhook_secret.value
+    secret       = aws_codebuild_webhook.codebuild_webhook.secret
   }
 
-  events = ["push"]
+  events = ["pull_request"]
 }
 
