@@ -3,6 +3,7 @@ version: 0.2
 env:
   variables:
     RESOURCES_DIR: 'aws/resources'
+    TF_COMMAND: 'apply' # apply / destroy
 
 phases:
   pre_build:
@@ -10,18 +11,13 @@ phases:
       - terraform fmt -check -diff -recursive ${RESOURCES_DIR}
       - |
         terraform init -input=false -backend=true \
-          -backend-config="bucket=${PROJECT}-artifacts" \
-          -backend-config="key=terraform/terraform.tfstate" \
-          -backend-config="dynamodb_table=${PROJECT}-terraform-lock" \
-          -backend-config="region=${AWS_REGION}" \
+          -backend-config="${RESOURCES_DIR}/terraform.tfbackend" \
           ${RESOURCES_DIR}
       - terraform validate -json ${RESOURCES_DIR}
   build:
     commands:
       - |
-        terraform apply \
+        terraform ${TF_COMMAND} \
           -input=false -auto-approve -compact-warnings \
-          -var="AWS_REGION=${AWS_REGION}" \
-          -var="PROJECT=${PROJECT}" \
           -var-file="${RESOURCES_DIR}/terraform.tfvars" \
           ${RESOURCES_DIR}
