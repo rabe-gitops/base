@@ -22,11 +22,3 @@ variable "GITHUB_BRANCH" {
   type = string
 }
 
-variable "GITHUB_TOKEN" {
-  type = string
-}
-
-variable "WEBHOOK_SECRET" {
-  type = string
-}
-
