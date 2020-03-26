@@ -1,19 +1,3 @@
-data "aws_ssm_parameter" "github_token" {
-  name = "/${lower(var.PROJECT)}/github/token"
-}
-
-provider "aws" {
-  version = "~> 2.54"
-  region  = var.AWS_REGION
-  profile = var.AWS_PROFILE
-}
-
-provider "github" {
-  version      = "~> 2.4"
-  token        = data.aws_ssm_parameter.github_token.value
-  organization = var.GITHUB_OWNER
-}
-
 # S3 Bucket
 resource "aws_s3_bucket" "artifacts_bucket" {
   provider      = aws
@@ -86,6 +70,17 @@ resource "github_repository_webhook" "repository_webhook" {
   events = ["push", "pull_request"]
 }
 
+resource "github_branch_protection" "branch_protection" {
+  repository     = github_repository.infrastructure_repo.name
+  branch         = "master"
+  enforce_admins = false
+
+  required_status_checks {
+    strict   = false
+    # contexts = [""]
+  }
+}
+
 # CodeBuild
 resource "aws_codebuild_source_credential" "codebuild_source_credential" {
   auth_type   = "PERSONAL_ACCESS_TOKEN"
@@ -131,10 +126,11 @@ resource "aws_codebuild_project" "codebuild" {
   build_timeout = 120
 
   source {
-    type            = "GITHUB"
-    location        = github_repository.infrastructure_repo.http_clone_url
-    git_clone_depth = 1
-    buildspec       = "aws/buildspec.yaml"
+    type                = "GITHUB"
+    location            = github_repository.infrastructure_repo.http_clone_url
+    git_clone_depth     = 1
+    buildspec           = "aws/buildspec.yaml"
+    report_build_status = true
   }
 
   artifacts {
