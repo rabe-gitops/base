@@ -87,6 +87,12 @@ resource "github_repository_webhook" "repository_webhook" {
 }
 
 # CodeBuild
+resource "aws_codebuild_source_credential" "codebuild_source_credential" {
+  auth_type   = "PERSONAL_ACCESS_TOKEN"
+  server_type = "GITHUB"
+  token       = data.aws_ssm_parameter.github_token.value
+}
+
 resource "aws_iam_role" "codebuild_role" {
   provider = aws
   name     = "${var.PROJECT}CodeBuildRole"
