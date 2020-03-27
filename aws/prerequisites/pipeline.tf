@@ -1,7 +1,7 @@
 # S3 Bucket
-resource "aws_s3_bucket" "artifacts_bucket" {
+resource "aws_s3_bucket" "s3_terraform_state_bucket" {
   provider      = aws
-  bucket        = "${lower(var.PROJECT)}-artifacts"
+  bucket        = "${lower(var.PROJECT)}-terraform-state"
   acl           = "private"
   force_destroy = true
 
@@ -18,7 +18,7 @@ resource "aws_s3_bucket" "artifacts_bucket" {
   }
 
   tags = {
-    Name    = "${lower(var.PROJECT)}-artifacts"
+    Name    = "${lower(var.PROJECT)}-terraform-state"
     Project = lower(var.PROJECT)
   }
 }
