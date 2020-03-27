@@ -14,7 +14,7 @@ phases:
       # Init
       - |
         terraform init -input=false -backend=true \
-          -backend-config="${RESOURCES_DIR}/terraform.tfbackend" \
+          -backend-config="${RESOURCES_DIR}/terraform.tfbackend.json" \
           ${RESOURCES_DIR}
 
       # Validate
@@ -34,5 +34,5 @@ phases:
       - |
         terraform ${TF_COMMAND} \
           -input=false -auto-approve -compact-warnings \
-          -var-file="${RESOURCES_DIR}/terraform.tfvars" \
+          -var-file="${RESOURCES_DIR}/terraform.tfvars.json" \
           ${RESOURCES_DIR}
