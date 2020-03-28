@@ -49,6 +49,11 @@ resource "github_repository" "infrastructure_repo" {
   description = "Repository containing the IaC files for the Rabe GitOps resources"
 
   private = var.GITHUB_PRIVATE
+
+  template {
+    owner      = "rabe-gitops"
+    repository = "base"
+  }
 }
 
 resource "github_repository_webhook" "repository_webhook" {
