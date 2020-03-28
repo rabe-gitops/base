@@ -70,17 +70,6 @@ resource "github_repository_webhook" "repository_webhook" {
   events = ["push", "pull_request"]
 }
 
-resource "github_branch_protection" "branch_protection" {
-  repository     = github_repository.infrastructure_repo.name
-  branch         = var.GITHUB_BRANCH
-  enforce_admins = false
-
-  required_status_checks {
-    strict = false
-    # contexts = [""]
-  }
-}
-
 # CodeBuild
 resource "aws_codebuild_source_credential" "codebuild_source_credential" {
   auth_type   = "PERSONAL_ACCESS_TOKEN"
