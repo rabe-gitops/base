@@ -48,12 +48,7 @@ resource "github_repository" "infrastructure_repo" {
   name        = var.GITHUB_REPOSITORY
   description = "Repository containing the IaC files for the Rabe GitOps resources"
 
-  private = false
-
-  template {
-    owner      = "rabe-gitops"
-    repository = "base"
-  }
+  private = var.GITHUB_PRIVATE
 }
 
 resource "github_repository_webhook" "repository_webhook" {
@@ -72,11 +67,11 @@ resource "github_repository_webhook" "repository_webhook" {
 
 resource "github_branch_protection" "branch_protection" {
   repository     = github_repository.infrastructure_repo.name
-  branch         = "master"
+  branch         = var.GITHUB_BRANCH
   enforce_admins = false
 
   required_status_checks {
-    strict   = false
+    strict = false
     # contexts = [""]
   }
 }
@@ -168,7 +163,7 @@ resource "aws_codebuild_webhook" "codebuild_webhook" {
 
     filter {
       type    = "HEAD_REF"
-      pattern = "master"
+      pattern = var.GITHUB_BRANCH
     }
   }
 }

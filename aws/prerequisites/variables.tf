@@ -18,6 +18,10 @@ variable "GITHUB_REPOSITORY" {
   type = string
 }
 
+variable "GITHUB_PRIVATE" {
+  type = string
+}
+
 variable "GITHUB_BRANCH" {
   type = string
 }
