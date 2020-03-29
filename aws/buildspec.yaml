@@ -23,7 +23,7 @@ phases:
       # Pull Requests on 'master' -> plan
       # Push/Merge on 'master' -> apply/destroy
       - |
-        if [[ ${CODEBUILD_WEBHOOK_TRIGGER} =~ pr/* ]]; then
+        if expr "${CODEBUILD_WEBHOOK_TRIGGER}" : "pr/*" > /dev/null; then
           TF_COMMAND="plan"
         else
           TF_COMMAND=${TF_ACTION}
