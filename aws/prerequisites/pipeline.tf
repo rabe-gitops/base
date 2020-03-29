@@ -1,29 +1,3 @@
-# S3 Bucket
-resource "aws_s3_bucket" "s3_terraform_state_bucket" {
-  provider      = aws
-  bucket        = "${lower(var.PROJECT)}-terraform-state"
-  acl           = "private"
-  force_destroy = true
-
-  versioning {
-    enabled = true
-  }
-
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
-  }
-
-  tags = {
-    Name    = "${lower(var.PROJECT)}-terraform-state"
-    Project = lower(var.PROJECT)
-  }
-}
-
-
 # DynamoDB Table
 resource "aws_dynamodb_table" "dynamodb_terraform_lock_table" {
   provider     = aws
@@ -54,20 +28,6 @@ resource "github_repository" "infrastructure_repo" {
     owner      = "rabe-gitops"
     repository = "base"
   }
-}
-
-resource "github_repository_webhook" "repository_webhook" {
-  provider   = github
-  repository = github_repository.infrastructure_repo.name
-
-  configuration {
-    url          = aws_codebuild_webhook.codebuild_webhook.url
-    content_type = "json"
-    insecure_ssl = true
-    secret       = aws_codebuild_webhook.codebuild_webhook.secret
-  }
-
-  events = ["push", "pull_request"]
 }
 
 # CodeBuild

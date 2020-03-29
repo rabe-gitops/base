@@ -9,12 +9,8 @@ provider "aws" {
 
 # provider "github" {
 #   version      = "~> 2.4"
-#   token        = var.GITHUB_TOKEN # set the TF_VAR_GITHUB_TOKEN env variable before!
+#   token        = data.aws_ssm_parameter.github_token.value
 #   organization = var.GITHUB_OWNER
-# }
-
-# data "aws_ssm_parameter" "github_token" {
-#   name = "${lower(var.PROJECT)}-github-token"
 # }
 
 module "network" {
