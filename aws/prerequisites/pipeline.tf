@@ -24,10 +24,10 @@ resource "github_repository" "infrastructure_repo" {
 
   private = var.GITHUB_PRIVATE
 
-  template {
-    owner      = "rabe-gitops"
-    repository = "base"
-  }
+  # template {
+  #   owner      = "rabe-gitops"
+  #   repository = "base"
+  # }
 }
 
 # CodeBuild
